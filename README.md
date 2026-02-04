@@ -1,8 +1,8 @@
-# Ethical Web Scraper for Cybersecurity
+# ScrapyScrape
 
-A professional, ethical web scraper designed for cybersecurity research, OSINT analysis, and security auditing. Built by Lincoln Commercial Solutions for responsible security testing and analysis.
+A professional web scraper for security research, OSINT analysis, and security auditing. Built for responsible security testing and analysis.
 
-## 🎯 Features
+## Features
 
 - **Ethical by Design**: Respects robots.txt, implements rate limiting, and uses clear identification
 - **Security-Focused**: Extracts security headers, SSL/TLS info, tech stack fingerprints, and security.txt
@@ -10,8 +10,9 @@ A professional, ethical web scraper designed for cybersecurity research, OSINT a
 - **Structured Output**: Clean JSON reports with Pydantic validation
 - **Audit Trail**: Comprehensive structured logging for compliance
 - **CLI Interface**: Easy-to-use command-line tool with rich formatting
+- **Web Interface**: Streamlit-based UI for interactive scraping
 
-## 📋 What It Extracts
+## What It Extracts
 
 - HTTP security headers (CSP, HSTS, X-Frame-Options, etc.)
 - Missing critical security headers
@@ -20,10 +21,10 @@ A professional, ethical web scraper designed for cybersecurity research, OSINT a
 - JavaScript framework detection (React, Vue, Angular, etc.)
 - Security.txt presence and location
 - Page metadata (title, description)
-- Link analysis (internal/external counts)
+- Link analysis (internal/external with full URLs)
 - Contact information (emails - use responsibly)
 
-## 🚀 Installation
+## Installation
 
 ### Prerequisites
 
@@ -41,15 +42,15 @@ A professional, ethical web scraper designed for cybersecurity research, OSINT a
 
 1. **Clone or download this project**:
    ```bash
-   cd /home/linkl0n/web-scrape
+   cd /path/to/web-scrape
    ```
 
 2. **Create a virtual environment** (recommended):
    ```bash
    python3 -m venv venv
    source venv/bin/activate  # On Linux/Mac
-   # or
-   venv\Scripts\activate  # On Windows
+   # OR on Windows:
+   venv\Scripts\activate
    ```
 
 3. **Install dependencies**:
@@ -57,273 +58,269 @@ A professional, ethical web scraper designed for cybersecurity research, OSINT a
    pip install -r requirements.txt
    ```
 
-4. **Optional: Install Playwright for dynamic scraping**:
+4. **Install Playwright browsers** (for dynamic scraping):
    ```bash
-   pip install playwright
    playwright install chromium
    ```
 
-## 💻 Usage
+## Usage
 
-### 🌐 Web UI (Recommended for Easy Use)
+### Web Interface (Recommended)
 
-**Launch the web interface:**
-```bash
-./run_ui.sh
-```
-
-Or manually:
+**Start the web UI**:
 ```bash
 streamlit run app.py
 ```
 
-Then open your browser to: **http://localhost:8501**
+Then open your browser to `http://localhost:8501`
 
-**Features:**
-- 🎨 Beautiful, intuitive interface
-- 📊 Real-time progress tracking
-- 📈 Visual metrics and charts
-- 🔍 Interactive results explorer
-- ⬇️ One-click report downloads
-- ⚙️ Easy configuration
+**Features**:
+- Interactive URL input
+- Real-time progress tracking
+- Two-column results display
+- Downloadable CSV files for links
+- JSON export
+- Quick test presets
 
-See [WEB_UI_GUIDE.md](WEB_UI_GUIDE.md) for detailed instructions.
+### Command Line Interface
 
-### 🖥️ Command-Line Interface
-
-### Basic Static Scraping
-
+**Basic usage**:
 ```bash
-# Scrape a single URL
 python main.py https://example.com
-
-# With custom contact email
-python main.py https://example.com --email your-email@example.com
 ```
 
-### Dynamic Scraping (JavaScript-heavy sites)
-
+**Static scraping (fast)**:
 ```bash
-# Use Playwright for JavaScript rendering
-python main.py https://example.com --dynamic
+python main.py https://example.com --mode static
 ```
 
-### Advanced Options
-
+**Dynamic scraping (JavaScript-heavy sites)**:
 ```bash
-# Save to custom output file
-python main.py https://example.com --output my_report.json
+python main.py https://example.com --mode dynamic
+```
 
-# Ignore robots.txt (use responsibly!)
-python main.py https://example.com --ignore-robots
+**Save to specific file**:
+```bash
+python main.py https://example.com --output my-report.json
+```
 
-# Custom timeout and retries
+**Override robots.txt** (use with permission):
+```bash
+python main.py https://example.com --no-respect-robots
+```
+
+**Adjust timeout and retries**:
+```bash
 python main.py https://example.com --timeout 30 --max-retries 5
-
-# Debug logging
-python main.py https://example.com --log-level DEBUG
-
-# JSON-only output (no formatting)
-python main.py https://example.com --json-only
 ```
 
-### Command-Line Help
-
+**Get help**:
 ```bash
 python main.py --help
 ```
 
-## 📊 Output
+## Output
 
-### Console Output
+Reports are saved as JSON files in the `output/` directory with timestamps.
 
-The scraper provides a formatted security report in the terminal:
-
-```
-======================================================================
-SECURITY REPORT
-======================================================================
-
-📋 Page Information:
-   Status Code: 200
-   Title: Example Domain
-   Description: Example domain for use in illustrative examples...
-
-🔒 Security Headers:
-   ✓ Content-Security-Policy: default-src 'self'
-   ✓ X-Frame-Options: DENY
-
-⚠️  Missing Important Headers:
-   ✗ Strict-Transport-Security
-   ✗ X-Content-Type-Options
-
-📄 Security.txt:
-   ✓ Found at: https://example.com/.well-known/security.txt
-
-🔐 SSL/TLS:
-   ✓ Certificate valid
-   Issuer: Let's Encrypt
-```
-
-### JSON Reports
-
-All reports are saved as JSON files in the `output/` directory:
-
+**Example report structure**:
 ```json
 {
   "url": "https://example.com",
   "status_code": 200,
-  "timestamp": "2026-02-03T10:30:00",
+  "timestamp": "2026-02-04T10:30:00",
   "title": "Example Domain",
   "security_headers": {
     "Content-Security-Policy": "default-src 'self'",
     "X-Frame-Options": "DENY"
   },
   "missing_important_headers": [
-    "Strict-Transport-Security",
-    "X-Content-Type-Options"
+    "Strict-Transport-Security"
   ],
-  "has_security_txt": true,
-  "ssl_verified": true
+  "ssl_verified": true,
+  "ssl_issuer": "DigiCert Inc",
+  "server": "nginx/1.18.0",
+  "internal_links": [
+    "https://example.com/about",
+    "https://example.com/contact"
+  ],
+  "external_links": [
+    "https://www.iana.org/domains/example"
+  ]
 }
 ```
 
-## 🛡️ Ethical Guidelines
-
-This tool is designed for **ethical and legal use only**:
-
-1. ✅ **Only scrape public data** - No unauthorized access
-2. ✅ **Respect robots.txt** - Always use `--respect-robots` (default)
-3. ✅ **Rate limiting** - Built-in delays (2.5-7 seconds) prevent server overload
-4. ✅ **Clear identification** - User-Agent includes contact email
-5. ✅ **Authorized testing** - Only use on systems you own or have permission to test
-6. ✅ **Data privacy** - Don't harvest personal information
-7. ✅ **Audit trails** - All actions are logged for accountability
-
-### ⚠️ Legal Disclaimer
-
-Users are responsible for ensuring their use complies with:
-- Website Terms of Service
-- GDPR/CCPA and data protection laws
-- Computer Fraud and Abuse Act (CFAA) and similar laws
-- Applicable cybersecurity regulations
-
-**This tool is for authorized security research and testing only.**
-
-## 📁 Project Structure
+## Project Structure
 
 ```
 web-scrape/
-├── scraper/
-│   ├── __init__.py       # Package initialization
-│   ├── core.py           # Main scraping logic (static & dynamic)
-│   ├── models.py         # Pydantic data models
-│   ├── ethics.py         # Robots.txt compliance & rate limiting
-│   └── utils.py          # Logging, headers, helpers
-├── output/               # JSON reports saved here
-├── main.py               # CLI entry point
-├── requirements.txt      # Python dependencies
-├── README.md             # This file
-├── details.txt           # Technical specifications
-├── info.txt              # Technology stack info
-├── instructions.txt      # Implementation guide
-└── plan.txt              # Development plan
+├── scraper/              # Core scraping package
+│   ├── __init__.py
+│   ├── core.py          # Main scraping logic
+│   ├── models.py        # Pydantic data models
+│   ├── ethics.py        # Ethical compliance layer
+│   └── utils.py         # Helper functions
+├── app.py               # Streamlit web interface
+├── main.py              # CLI entry point
+├── requirements.txt     # Python dependencies
+├── setup.sh            # Automated setup script
+├── run_ui.sh           # Quick UI launcher
+├── test_scraper.py     # Installation verification
+├── output/             # Generated reports
+├── README.md           # This file
+├── QUICKSTART.md       # Quick reference guide
+├── WEB_UI_GUIDE.md     # Web UI documentation
+└── DEPLOYMENT.md       # Deployment instructions
 ```
 
-## 🔧 Configuration
+## Ethical Use
 
-### Custom Headers
+This tool is designed for legitimate security research and testing. Always ensure you have permission before scanning any website.
 
-Edit `scraper/utils.py` to customize HTTP headers:
+**Guidelines**:
+- Only scan sites you own or have explicit permission to test
+- Respect robots.txt unless you have permission to override
+- Use appropriate delays to avoid overloading servers
+- Identify yourself with a valid contact email
+- Follow responsible disclosure practices
+- Comply with all applicable laws and regulations
 
-```python
-def get_headers(contact_email: str = "your-email@example.com"):
-    return {
-        "User-Agent": f"YourBot/1.0 ({contact_email})",
-        # ... other headers
-    }
-```
+## Security Headers Checked
 
-### Delay Settings
+- **Content-Security-Policy** (CSP): Prevents XSS attacks
+- **Strict-Transport-Security** (HSTS): Enforces HTTPS
+- **X-Frame-Options**: Prevents clickjacking
+- **X-Content-Type-Options**: Prevents MIME sniffing
+- **Referrer-Policy**: Controls referrer information
+- **Permissions-Policy**: Controls browser features
+- **X-XSS-Protection**: Legacy XSS protection
 
-Modify `scraper/ethics.py` to adjust delays:
+## Technology Detection
 
-```python
-def ethical_delay(min_sec: float = 2.5, max_sec: float = 7.0):
-    # Adjust min_sec and max_sec as needed
-    ...
-```
+The scraper can detect:
+- React
+- Vue.js
+- Angular
+- jQuery
+- Bootstrap
+- Next.js
+- Nuxt.js
+- And more...
 
-## 🧪 Testing
+## Requirements
 
-Test on safe, public domains:
+- Python 3.9+
+- requests
+- beautifulsoup4
+- lxml
+- pydantic
+- structlog
+- httpx
+- playwright (optional, for dynamic scraping)
+- streamlit (for web UI)
 
+## Troubleshooting
+
+### Playwright Installation Issues
+
+If you encounter issues with Playwright:
 ```bash
-# Safe test targets
-python main.py https://example.com
-python main.py https://httpbin.org/html
-```
-
-**Never test on production systems without authorization!**
-
-## 🐛 Troubleshooting
-
-### SSL Errors
-
-```bash
-# Check if site has valid SSL
-python main.py https://example.com --log-level DEBUG
-```
-
-### Timeout Issues
-
-```bash
-# Increase timeout for slow sites
-python main.py https://example.com --timeout 30
-```
-
-### Playwright Issues
-
-```bash
-# Reinstall browser binaries
 playwright install chromium
+playwright install-deps
+```
 
-# Check if Playwright is installed
-python -c "import playwright; print('OK')"
+### Permission Errors
+
+Make sure scripts are executable:
+```bash
+chmod +x setup.sh run_ui.sh
 ```
 
 ### Import Errors
 
+Ensure the virtual environment is activated:
 ```bash
-# Verify all dependencies are installed
-pip install -r requirements.txt --upgrade
+source venv/bin/activate  # Linux/Mac
+venv\Scripts\activate     # Windows
 ```
 
-## 📚 Dependencies
+### Port Already in Use
 
-- **requests** - HTTP requests
-- **beautifulsoup4** - HTML parsing
-- **lxml** - Fast XML/HTML parser
-- **pydantic** - Data validation
-- **structlog** - Structured logging
-- **playwright** - Browser automation (optional)
+If port 8501 is already in use:
+```bash
+streamlit run app.py --server.port 8502
+```
 
-## 🤝 Contributing
+## Development
 
-This is a private cybersecurity project. For issues or improvements, contact the Lincoln Commercial Solutions team.
+**Run tests**:
+```bash
+python test_scraper.py
+```
 
-## 📄 License
+**Check installed packages**:
+```bash
+pip list
+```
 
-Copyright © 2026 Lincoln Commercial Solutions. All rights reserved.
+**Update dependencies**:
+```bash
+pip install --upgrade -r requirements.txt
+```
 
-For authorized use in cybersecurity research and development only.
+## Deployment
 
-## 📞 Contact
+See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions including:
+- Docker deployment
+- Cloud VPS deployment
+- Streamlit Cloud
+- Railway deployment
+- systemd service setup
+- Nginx reverse proxy
+- SSL/TLS configuration
 
-- **Organization**: Lincoln Commercial Solutions
-- **Project**: Cybersecurity Development
-- **Email**: security-research@lincolncommercial.com
+**Quick deployment**:
+```bash
+sudo ./deploy.sh
+```
+
+## Contributing
+
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## License
+
+This project is licensed under the MIT License with an ethical use clause. See [LICENSE](LICENSE) for details.
+
+## Support
+
+For issues and questions:
+- GitHub Issues: https://github.com/lincolncommercialsolutions/ethical-web-scraper/issues
+- Documentation: See guides in this repository
+
+## Changelog
+
+### Version 1.0.0
+- Initial release
+- Static and dynamic scraping modes
+- Web UI with Streamlit
+- CLI interface
+- Link extraction and export
+- Security header analysis
+- SSL/TLS verification
+- Technology detection
+
+## Acknowledgments
+
+Built with:
+- Beautiful Soup for HTML parsing
+- Playwright for browser automation
+- Streamlit for web interface
+- Pydantic for data validation
+- structlog for structured logging
 
 ---
 
-**Remember**: With great scraping power comes great responsibility. Always act ethically and legally.
+**Version**: 1.0.0  
+**Last Updated**: February 4, 2026  
+**Status**: Production Ready

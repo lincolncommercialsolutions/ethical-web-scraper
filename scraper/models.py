@@ -43,6 +43,8 @@ class SecurityReport(BaseModel):
     extracted_emails: List[str] = []
     external_links_count: int = 0
     internal_links_count: int = 0
+    internal_links: List[str] = []
+    external_links: List[str] = []
     
     # Error tracking
     error: Optional[str] = None

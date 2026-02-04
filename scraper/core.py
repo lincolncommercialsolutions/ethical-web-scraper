@@ -173,11 +173,13 @@ def _extract_static_data(url: str, response: requests.Response, soup: BeautifulS
     # Extract emails (use cautiously)
     data["extracted_emails"] = _extract_emails(soup)
     
-    # Count links
+    # Extract and categorize links
     links = soup.find_all('a', href=True)
     internal, external = _categorize_links(url, links)
-    data["internal_links_count"] = len(internal)
-    data["external_links_count"] = len(external)
+    data["internal_links"] = list(set(internal))  # Remove duplicates
+    data["external_links"] = list(set(external))  # Remove duplicates
+    data["internal_links_count"] = len(data["internal_links"])
+    data["external_links_count"] = len(data["external_links"])
     
     # Detect JavaScript frameworks
     data["js_framework_hints"] = _detect_js_frameworks(soup, response.text)
@@ -449,10 +451,13 @@ def scrape_dynamic(
             
             data["extracted_emails"] = _extract_emails(soup)
             
+            # Extract and categorize links
             links = soup.find_all('a', href=True)
             internal, external = _categorize_links(url, links)
-            data["internal_links_count"] = len(internal)
-            data["external_links_count"] = len(external)
+            data["internal_links"] = list(set(internal))  # Remove duplicates
+            data["external_links"] = list(set(external))  # Remove duplicates
+            data["internal_links_count"] = len(data["internal_links"])
+            data["external_links_count"] = len(data["external_links"])
             
             # Check security.txt
             security_txt_present, security_txt_url = _check_security_txt(url)

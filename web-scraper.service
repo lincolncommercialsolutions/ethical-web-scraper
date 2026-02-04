@@ -1,0 +1,17 @@
+[Unit]
+Description=Ethical Web Scraper - Streamlit Application
+After=network.target
+
+[Service]
+Type=simple
+User=linkl0n
+WorkingDirectory=/home/linkl0n/web-scrape
+Environment="PATH=/home/linkl0n/venv/bin"
+ExecStart=/home/linkl0n/venv/bin/streamlit run app.py --server.port 8501 --server.address 0.0.0.0 --server.headless true
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

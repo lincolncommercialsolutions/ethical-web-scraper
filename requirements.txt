@@ -19,9 +19,8 @@ fake-useragent>=1.4.0
 # Structured logging
 structlog>=24.1.0
 
-# Browser automation for dynamic content (optional)
-# Uncomment to enable dynamic scraping:
-# playwright>=1.41.0
+# Browser automation for dynamic content
+playwright>=1.41.0
 
 # Additional security and utilities
 urllib3>=2.1.0

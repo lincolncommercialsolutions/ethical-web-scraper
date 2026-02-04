@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  web-scraper:
+    build: .
+    container_name: ethical-web-scraper
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./output:/app/output
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8501"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

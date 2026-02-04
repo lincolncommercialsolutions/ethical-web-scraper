@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """
-Ethical Web Scraper - Web UI
-Lincoln Commercial Solutions - Cybersecurity Project
+ScrapyScrape - Web UI
 
-A Streamlit-based web interface for ethical web scraping.
+A Streamlit-based web interface for web scraping.
 """
 
 import streamlit as st
@@ -18,8 +17,8 @@ from scraper.utils import save_report, sanitize_url, logger
 
 # Page configuration
 st.set_page_config(
-    page_title="Ethical Web Scraper",
-    page_icon="🔒",
+    page_title="ScrapyScrape",
+    page_icon="⚡",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -71,12 +70,12 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Header
-st.markdown('<div class="main-header">🔒 Ethical Web Scraper</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-header">Lincoln Commercial Solutions - Cybersecurity Analysis Tool</div>', unsafe_allow_html=True)
+st.markdown('<div class="main-header">ScrapyScrape</div>', unsafe_allow_html=True)
+st.markdown('<div class="sub-header">Web Scraping & Analysis Tool</div>', unsafe_allow_html=True)
 
 # Sidebar configuration
 with st.sidebar:
-    st.header("⚙️ Configuration")
+    st.header("Configuration")
     
     st.markdown("---")
     
@@ -90,16 +89,9 @@ with st.sidebar:
     
     st.markdown("---")
     
-    # Contact email
-    contact_email = st.text_input(
-        "Contact Email",
-        value="security-research@lincolncommercial.com",
-        help="Your contact email for ethical identification"
-    )
-    
     # Ethics settings
-    st.subheader("🛡️ Ethics Settings")
-    respect_robots = st.checkbox("Respect robots.txt", value=True, help="Always recommended!")
+    st.subheader("Ethics Settings")
+    respect_robots = st.checkbox("Respect robots.txt", value=False, help="Uncheck to override robots.txt (use only with permission)")
     
     # Advanced settings
     with st.expander("Advanced Settings"):
@@ -110,7 +102,7 @@ with st.sidebar:
     st.markdown("---")
     
     # Ethical reminder
-    st.info("⚠️ **Ethical Use Only**\n\nOnly scan sites you own or have permission to test.")
+    st.info("Only scan sites you own or have permission to test.")
     
     # Stats
     output_dir = Path("output")
@@ -122,7 +114,7 @@ with st.sidebar:
 col1, col2 = st.columns([2, 1])
 
 with col1:
-    st.header("🎯 Target Configuration")
+    st.header("Target Configuration")
     
     # URL input
     url = st.text_input(
@@ -135,24 +127,24 @@ with col1:
     st.caption("Quick Test:")
     col_a, col_b, col_c = st.columns(3)
     with col_a:
-        if st.button("🧪 Example.com"):
+        if st.button("Example.com"):
             url = "https://example.com"
             st.rerun()
     with col_b:
-        if st.button("🔧 HTTPBin"):
+        if st.button("HTTPBin"):
             url = "https://httpbin.org/html"
             st.rerun()
     with col_c:
-        if st.button("🌐 Mozilla"):
+        if st.button("Mozilla"):
             url = "https://www.mozilla.org"
             st.rerun()
 
 with col2:
-    st.header("🚀 Actions")
+    st.header("Actions")
     
-    scan_button = st.button("🔍 Start Scan", type="primary", use_container_width=True)
+    scan_button = st.button("Start Scan", type="primary", use_container_width=True)
     
-    if st.button("🗑️ Clear Results", use_container_width=True):
+    if st.button("Clear Results", use_container_width=True):
         if 'report' in st.session_state:
             del st.session_state.report
         st.rerun()
@@ -162,12 +154,12 @@ st.markdown("---")
 # Scan execution
 if scan_button:
     if not url:
-        st.error("⚠️ Please enter a URL to scan")
+        st.error("Please enter a URL to scan")
     else:
         # Sanitize URL
         url = sanitize_url(url)
         
-        with st.spinner(f"🔄 Scanning {url}..."):
+        with st.spinner(f"Scanning {url}..."):
             try:
                 # Progress indicators
                 progress_bar = st.progress(0)
@@ -185,7 +177,7 @@ if scan_button:
                     progress_bar.progress(60)
                     report = scrape_dynamic(
                         url=url,
-                        contact_email=contact_email,
+                        contact_email="scraper@example.com",
                         respect_robots=respect_robots,
                         timeout=timeout * 1000
                     )
@@ -193,7 +185,7 @@ if scan_button:
                     progress_bar.progress(60)
                     report = scrape_static(
                         url=url,
-                        contact_email=contact_email,
+                        contact_email="scraper@example.com",
                         respect_robots=respect_robots,
                         max_retries=max_retries,
                         timeout=timeout
@@ -207,17 +199,17 @@ if scan_button:
                 save_report(report_dict, output_dir="output")
                 
                 progress_bar.progress(100)
-                status_text.text("✅ Scan complete!")
+                status_text.text("Scan complete!")
                 
                 # Store in session state
                 st.session_state.report = report
                 st.session_state.report_dict = report_dict
                 st.session_state.url = url
                 
-                st.success("✅ Scan completed successfully!")
+                st.success("Scan completed successfully!")
                 
             except Exception as e:
-                st.error(f"❌ Error: {str(e)}")
+                st.error(f"Error: {str(e)}")
                 logger.error("ui_scan_error", error=str(e), url=url)
 
 # Display results
@@ -225,14 +217,14 @@ if 'report' in st.session_state:
     report = st.session_state.report
     report_dict = st.session_state.report_dict
     
-    st.header("📊 Scan Results")
+    st.header("Scan Results")
     
     # Error check
     if report.error:
-        st.markdown(f'<div class="error-box">❌ <strong>Error:</strong> {report.error}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="error-box"><strong>Error:</strong> {report.error}</div>', unsafe_allow_html=True)
     else:
         # Summary metrics - Expanded
-        st.subheader("📈 Quick Summary")
+        st.subheader("Quick Summary")
         col1, col2, col3, col4, col5, col6 = st.columns(6)
         
         with col1:
@@ -246,12 +238,12 @@ if 'report' in st.session_state:
         with col5:
             st.metric("External Links", report.external_links_count)
         with col6:
-            ssl_status = "✅" if report.ssl_verified else "❌"
+            ssl_status = "Valid" if report.ssl_verified else "Invalid"
             st.metric("SSL/TLS", ssl_status)
         
         # Critical findings alert
         if report.has_critical_missing_headers():
-            st.markdown('<div class="warning-box">⚠️ <strong>Warning:</strong> Critical security headers are missing!</div>', unsafe_allow_html=True)
+            st.markdown('<div class="warning-box"><strong>Warning:</strong> Critical security headers are missing!</div>', unsafe_allow_html=True)
         
         # Complete Information Display
         st.markdown("---")
@@ -261,7 +253,7 @@ if 'report' in st.session_state:
         
         with col_left:
             # Page Information
-            st.subheader("📋 Page Information")
+            st.subheader("Page Information")
             st.write(f"**URL:** {report.url}")
             st.write(f"**Title:** {report.title or 'N/A'}")
             st.write(f"**Status Code:** {report.status_code}")
@@ -272,7 +264,7 @@ if 'report' in st.session_state:
             st.markdown("---")
             
             # Server & Technology
-            st.subheader("🖥️ Server & Technology")
+            st.subheader("Server & Technology")
             st.write(f"**Server:** {report.server or 'Not disclosed'}")
             st.write(f"**Powered By:** {report.powered_by or 'Not disclosed'}")
             st.write(f"**Generator:** {report.generator or 'Not detected'}")
@@ -287,18 +279,18 @@ if 'report' in st.session_state:
             st.markdown("---")
             
             # SSL/TLS Information
-            st.subheader("🔐 SSL/TLS Information")
+            st.subheader("SSL/TLS Information")
             if report.ssl_verified:
-                st.success(f"✅ Certificate Valid")
+                st.success("Certificate Valid")
                 if report.ssl_issuer:
                     st.write(f"**Issuer:** {report.ssl_issuer}")
             else:
-                st.error("❌ Certificate Verification Failed")
+                st.error("Certificate Verification Failed")
             
             st.markdown("---")
             
             # Links & Content
-            st.subheader("🔗 Links Analysis")
+            st.subheader("Links Analysis")
             st.write(f"**Internal Links:** {report.internal_links_count}")
             st.write(f"**External Links:** {report.external_links_count}")
             
@@ -310,69 +302,69 @@ if 'report' in st.session_state:
             st.markdown("---")
             
             # Security.txt
-            st.subheader("📄 Security.txt")
+            st.subheader("Security.txt")
             if report.has_security_txt:
-                st.success(f"✅ Found at: {report.security_txt_url}")
+                st.success(f"Found at: {report.security_txt_url}")
             else:
-                st.warning("❌ Not found")
+                st.warning("Not found")
         
         with col_right:
             # Security Headers - Complete List
-            st.subheader("🔒 Security Headers")
+            st.subheader("Security Headers")
             
             if report.security_headers:
-                st.write("**✅ Present Headers:**")
+                st.write("**Present Headers:**")
                 for header, value in report.security_headers.items():
-                    with st.expander(f"✅ {header}", expanded=False):
+                    with st.expander(header, expanded=False):
                         st.code(value, language="text")
             else:
-                st.warning("⚠️ No security headers found")
+                st.warning("No security headers found")
             
             st.markdown("---")
             
             # Missing Headers
-            st.write("**❌ Missing Important Headers:**")
+            st.write("**Missing Important Headers:**")
             if report.missing_important_headers:
                 for header in report.missing_important_headers:
-                    st.write(f"  ❌ {header}")
+                    st.write(f"  - {header}")
             else:
-                st.success("✅ All important headers present!")
+                st.success("All important headers present!")
             
             st.markdown("---")
             
             # Security Recommendations
-            st.subheader("💡 Security Recommendations")
+            st.subheader("Security Recommendations")
             if report.has_critical_missing_headers():
-                st.error("🚨 **CRITICAL:** Important security headers are missing!")
+                st.error("CRITICAL: Important security headers are missing!")
                 st.write("**Recommended Actions:**")
                 if "Content-Security-Policy" in report.missing_important_headers:
-                    st.write("• Implement Content-Security-Policy to prevent XSS attacks")
+                    st.write("- Implement Content-Security-Policy to prevent XSS attacks")
                 if "Strict-Transport-Security" in report.missing_important_headers:
-                    st.write("• Add Strict-Transport-Security (HSTS) to enforce HTTPS")
+                    st.write("- Add Strict-Transport-Security (HSTS) to enforce HTTPS")
                 if "X-Frame-Options" in report.missing_important_headers:
-                    st.write("• Set X-Frame-Options to prevent clickjacking")
+                    st.write("- Set X-Frame-Options to prevent clickjacking")
                 if "X-Content-Type-Options" in report.missing_important_headers:
-                    st.write("• Add X-Content-Type-Options to prevent MIME sniffing")
+                    st.write("- Add X-Content-Type-Options to prevent MIME sniffing")
             else:
-                st.success("✅ Security posture looks good!")
+                st.success("Security posture looks good!")
             
             st.markdown("---")
             
             # Additional Findings
-            st.subheader("🔍 Additional Findings")
+            st.subheader("Additional Findings")
             findings = []
             
             if not report.has_security_txt:
-                findings.append("• No security.txt file - Consider adding one for vulnerability disclosure")
+                findings.append("- No security.txt file - Consider adding one for vulnerability disclosure")
             
             if report.server:
-                findings.append(f"• Server type disclosed: {report.server}")
+                findings.append(f"- Server type disclosed: {report.server}")
             
             if report.generator:
-                findings.append(f"• CMS/Generator disclosed: {report.generator}")
+                findings.append(f"- CMS/Generator disclosed: {report.generator}")
             
             if not report.js_framework_hints:
-                findings.append("• No JavaScript frameworks detected (or static site)")
+                findings.append("- No JavaScript frameworks detected (or static site)")
             
             if findings:
                 for finding in findings:
@@ -382,25 +374,73 @@ if 'report' in st.session_state:
         
         st.markdown("---")
         
+        # Links Display Section
+        st.header("All Links Found")
+        
+        tab_internal, tab_external = st.tabs([f"Internal Links ({report.internal_links_count})", f"External Links ({report.external_links_count})"])
+        
+        with tab_internal:
+            if report.internal_links:
+                st.write(f"Found **{report.internal_links_count}** internal links:")
+                
+                # Create DataFrame for better display
+                df_internal = pd.DataFrame({"URL": sorted(report.internal_links)})
+                df_internal.index = range(1, len(df_internal) + 1)
+                
+                # Display as table with clickable links
+                st.dataframe(df_internal, use_container_width=True, height=400)
+                
+                # Download button
+                csv_internal = df_internal.to_csv(index=False)
+                st.download_button(
+                    label="Download Internal Links CSV",
+                    data=csv_internal,
+                    file_name=f"internal_links_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                    mime="text/csv"
+                )
+            else:
+                st.info("No internal links found")
+        
+        with tab_external:
+            if report.external_links:
+                st.write(f"Found **{report.external_links_count}** external links:")
+                
+                # Create DataFrame for better display
+                df_external = pd.DataFrame({"URL": sorted(report.external_links)})
+                df_external.index = range(1, len(df_external) + 1)
+                
+                # Display as table
+                st.dataframe(df_external, use_container_width=True, height=400)
+                
+                # Download button
+                csv_external = df_external.to_csv(index=False)
+                st.download_button(
+                    label="Download External Links CSV",
+                    data=csv_external,
+                    file_name=f"external_links_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                    mime="text/csv"
+                )
+            else:
+                st.info("No external links found")
         
         st.markdown("---")
         
         # Tabs for downloads
-        tab1, tab2 = st.tabs(["📄 Raw JSON", "📥 Downloads"])
+        tab1, tab2 = st.tabs(["Raw JSON", "Downloads"])
         
         with tab1:
-            st.subheader("📄 Complete JSON Report")
+            st.subheader("Complete JSON Report")
             st.json(report_dict)
         
         with tab2:
-            st.subheader("📥 Download Reports")
+            st.subheader("Download Reports")
             
             col1, col2 = st.columns(2)
             
             with col1:
                 json_str = json.dumps(report_dict, indent=2, default=str)
                 st.download_button(
-                    label="⬇️ Download JSON",
+                    label="Download JSON",
                     data=json_str,
                     file_name=f"report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
                     mime="application/json",
@@ -412,11 +452,4 @@ if 'report' in st.session_state:
 
 # Footer
 st.markdown("---")
-col1, col2, col3 = st.columns(3)
-
-with col1:
-    st.caption("🏢 Lincoln Commercial Solutions")
-with col2:
-    st.caption("🔒 Cybersecurity Project 2026")
-with col3:
-    st.caption("⚖️ Ethical Use Only")
+st.caption("ScrapyScrape - Web Scraping Tool")
