@@ -14,6 +14,13 @@ from pathlib import Path
 from scraper import scrape_static, scrape_dynamic, SecurityReport
 from scraper.utils import save_report, sanitize_url, logger
 
+# Check if Playwright is available
+try:
+    from playwright.sync_api import sync_playwright
+    PLAYWRIGHT_AVAILABLE = True
+except Exception:
+    PLAYWRIGHT_AVAILABLE = False
+
 
 # Page configuration
 st.set_page_config(
@@ -80,12 +87,18 @@ with st.sidebar:
     st.markdown("---")
     
     # Scraping mode
+    scraping_modes = ["Static (Fast)"]
+    if PLAYWRIGHT_AVAILABLE:
+        scraping_modes.append("Dynamic (JavaScript)")
+    else:
+        st.warning("Dynamic mode unavailable - Playwright not installed")
+    
     mode = st.radio(
         "Scraping Mode",
-        ["Static (Fast)", "Dynamic (JavaScript)"],
+        scraping_modes,
         help="Static mode is faster. Use Dynamic for JavaScript-heavy sites."
     )
-    use_dynamic = mode == "Dynamic (JavaScript)"
+    use_dynamic = mode == "Dynamic (JavaScript)" and PLAYWRIGHT_AVAILABLE
     
     st.markdown("---")
     

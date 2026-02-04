@@ -12,6 +12,8 @@ A professional web scraper for security research, OSINT analysis, and security a
 - **CLI Interface**: Easy-to-use command-line tool with rich formatting
 - **Web Interface**: Streamlit-based UI for interactive scraping
 
+**Note**: Dynamic (Playwright) scraping requires local deployment or Docker. Streamlit Cloud only supports static mode due to browser binary size limitations.
+
 ## What It Extracts
 
 - HTTP security headers (CSP, HSTS, X-Frame-Options, etc.)
